@@ -19,7 +19,8 @@ function toggleSidebar() {
 // Search functionality
 function handleSearch(event) {
     event.preventDefault();
-    const searchTerm = event.target.querySelector('input').value.toLowerCase();
+    const searchInput = event.target.querySelector('input');
+    const searchTerm = searchInput.value.toLowerCase();
     
     if (!searchTerm) {
         alert('Masukkan kata kunci pencarian');
@@ -36,7 +37,13 @@ function handleSearch(event) {
     })
     .then(response => response.json())
     .then(data => {
-        displaySearchResults(data);
+        if (Array.isArray(data)) {
+            displaySearchResults(data);
+        } else if (data.error) {
+            alert('Error: ' + data.error);
+        } else {
+            displaySearchResults([]);
+        }
     })
     .catch(error => {
         console.error('Error:', error);
@@ -46,6 +53,8 @@ function handleSearch(event) {
 
 function displaySearchResults(results) {
     const arenaResults = document.getElementById('arenaResults');
+    
+    if (!arenaResults) return;
     
     if (results.length === 0) {
         arenaResults.innerHTML = '<div class="col-12 text-center"><p>Tidak ada lapangan yang ditemukan</p></div>';
@@ -59,17 +68,54 @@ function displaySearchResults(results) {
                 <div class="card-body">
                     <h5 class="card-title">${arena.nama_lapangan}</h5>
                     <p class="card-text">Lokasi: ${arena.lokasi || 'Tidak tersedia'}</p>
-                    <p class="card-text">Harga per jam: Rp ${arena.harga_per_jam || '0'}</p>
-                    <button class="btn btn-primary" onclick="bookArena('${arena.nama_lapangan}')">Book Now</button>
+                    <p class="card-text">Harga per jam: Rp ${parseInt(arena.harga_per_jam || 0).toLocaleString('id-ID')}</p>
+                    <button class="btn btn-primary" onclick="bookArena('${arena.nama_lapangan}', ${arena.id_lapangan})">Book Now</button>
                 </div>
             </div>
         </div>
     `).join('');
 }
 
-function bookArena(arenaName) {
-    alert(`Anda memilih ${arenaName}! Silakan login terlebih dahulu untuk melakukan booking.`);
-    goToSignIn();
+function bookArena(arenaName, arenaId) {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!user.id) {
+        alert(`Anda memilih ${arenaName}! Silakan login terlebih dahulu untuk melakukan booking.`);
+        goToSignIn();
+        return;
+    }
+    
+    // Simple booking - in real app, you'd have a booking form
+    const tanggal = prompt('Masukkan tanggal booking (YYYY-MM-DD):');
+    const jamMulai = prompt('Masukkan jam mulai (HH:MM):');
+    const jamSelesai = prompt('Masukkan jam selesai (HH:MM):');
+    
+    if (tanggal && jamMulai && jamSelesai) {
+        const formData = new FormData();
+        formData.append('action', 'create');
+        formData.append('id_pelanggan', user.id);
+        formData.append('id_lapangan', arenaId);
+        formData.append('tanggal_booking', tanggal);
+        formData.append('jam_mulai', jamMulai);
+        formData.append('jam_selesai', jamSelesai);
+        
+        fetch('booking.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Booking berhasil dibuat!');
+                window.location.href = 'booking.html';
+            } else {
+                alert(data.message || 'Booking gagal');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan');
+        });
+    }
 }
 
 // Form handling with PHP backend
@@ -132,6 +178,12 @@ function handleSignUp(event) {
         console.error('Error:', error);
         alert('Terjadi kesalahan');
     });
+}
+
+// Add logout function
+function logout() {
+    localStorage.removeItem('user');
+    window.location.href = 'index.html';
 }
 
 // Document ready functions

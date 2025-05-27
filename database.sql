@@ -23,9 +23,14 @@ CREATE TABLE IF NOT EXISTS pelanggan (
 CREATE TABLE IF NOT EXISTS booking (
     id_booking INT(11) PRIMARY KEY AUTO_INCREMENT,
     id_pelanggan INT(11) NOT NULL,
+    id_lapangan INT(11) NOT NULL,
     tanggal_booking DATE NOT NULL,
+    jam_mulai TIME NOT NULL,
+    jam_selesai TIME NOT NULL,
     status ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending',
-    FOREIGN KEY (id_pelanggan) REFERENCES pelanggan(id_pelanggan)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_pelanggan) REFERENCES pelanggan(id_pelanggan),
+    FOREIGN KEY (id_lapangan) REFERENCES lapangan(id_lapangan)
 );
 
 -- Insert sample data for lapangan
@@ -40,3 +45,9 @@ INSERT INTO lapangan (nama_lapangan, lokasi, harga_per_jam) VALUES
 INSERT INTO pelanggan (nama, email, no_telepon) VALUES
 ('John Doe', 'john@example.com', '081234567890'),
 ('Jane Smith', 'jane@example.com', '081234567891');
+
+-- Insert sample booking data
+INSERT INTO booking (id_pelanggan, id_lapangan, tanggal_booking, jam_mulai, jam_selesai, status) VALUES
+(1, 1, '2024-01-15', '09:00:00', '11:00:00', 'confirmed'),
+(1, 2, '2024-01-20', '14:00:00', '16:00:00', 'pending'),
+(2, 3, '2024-01-18', '16:00:00', '18:00:00', 'confirmed');

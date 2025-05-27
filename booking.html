@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Booking - ArenaKuy!</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button class="sidebar-close" onclick="toggleSidebar()">&times;</button>
+        </div>
+        <div class="sidebar-content">
+            <a href="index.html" class="sidebar-item"><i class="fas fa-home me-2"></i>Dashboard</a>
+            <a href="booking.html" class="sidebar-item active"><i class="fas fa-calendar me-2"></i>My Booking</a>
+            <a href="history.html" class="sidebar-item"><i class="fas fa-history me-2"></i>History</a>
+            <a href="#" class="sidebar-item"><i class="fas fa-search me-2"></i>Search Arena</a>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <button class="sidebar-toggle me-3" onclick="toggleSidebar()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <a class="navbar-brand d-flex align-items-center" href="index.html">
+                    <span class="logo-icon">⚽</span>
+                    <span class="logo-text ms-2">ArenaKuy!</span>
+                </a>
+            </div>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="booking.html">Booking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="history.html">History</a></li>
+                    <li class="nav-item">
+                        <button class="btn btn-primary ms-2" onclick="logout()">Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">My Bookings</h2>
+                <div id="bookingList" class="row">
+                    <!-- Booking list will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="logo mb-3">
+                        <span class="logo-icon">⚽</span>
+                        <span class="logo-text">ArenaKuy!</span>
+                    </div>
+                    <p class="mb-0">© 2024 ArenaKuy! - Your Futsal Field Booking Platform</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserBookings();
+        });
+
+        function loadUserBookings() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (!user.id) {
+                alert('Silakan login terlebih dahulu');
+                window.location.href = 'signin.html';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('action', 'get_bookings');
+            formData.append('id_pelanggan', user.id);
+
+            fetch('booking.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayBookings(data.bookings);
+                } else {
+                    document.getElementById('bookingList').innerHTML = '<div class="col-12 text-center"><p>Gagal memuat data booking</p></div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('bookingList').innerHTML = '<div class="col-12 text-center"><p>Terjadi kesalahan</p></div>';
+            });
+        }
+
+        function displayBookings(bookings) {
+            const bookingList = document.getElementById('bookingList');
+            
+            if (bookings.length === 0) {
+                bookingList.innerHTML = '<div class="col-12 text-center"><p>Belum ada booking</p></div>';
+                return;
+            }
+
+            bookingList.innerHTML = bookings.map(booking => `
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">${booking.nama_lapangan}</h5>
+                            <p class="card-text">
+                                <strong>Lokasi:</strong> ${booking.lokasi}<br>
+                                <strong>Tanggal:</strong> ${booking.tanggal_booking}<br>
+                                <strong>Waktu:</strong> ${booking.jam_mulai} - ${booking.jam_selesai}<br>
+                                <strong>Status:</strong> <span class="badge bg-${booking.status === 'confirmed' ? 'success' : booking.status === 'pending' ? 'warning' : 'danger'}">${booking.status}</span>
+                            </p>
+                            <p class="card-text"><small class="text-muted">Harga: Rp ${booking.harga_per_jam}/jam</small></p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
