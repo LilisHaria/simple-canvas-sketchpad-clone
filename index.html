@@ -9,10 +9,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button class="sidebar-close" onclick="toggleSidebar()">&times;</button>
+        </div>
+        <div class="sidebar-content">
+            <a href="#" class="sidebar-item active">Dashboard</a>
+            <a href="#" class="sidebar-item">My Booking</a>
+            <a href="#" class="sidebar-item">Timetable</a>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
                 <span class="logo-icon">⚽</span>
                 <span class="logo-text">ArenaKuy!</span>
             </div>
@@ -22,13 +43,21 @@
                 <a href="#" class="nav-link">History</a>
                 <button class="btn-signin" onclick="goToSignIn()">Sign In</button>
             </div>
-            <div class="mobile-menu-toggle">
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
         </div>
     </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#" class="mobile-nav-link">Home</a>
+        <a href="#" class="mobile-nav-link">Booking</a>
+        <a href="#" class="mobile-nav-link">History</a>
+        <button class="btn-signin mobile" onclick="goToSignIn()">Sign In</button>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">
