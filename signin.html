@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - ArenaKuy!</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-background"></div>
+        <div class="auth-overlay"></div>
+        
+        <div class="auth-content">
+            <div class="auth-form">
+                <div class="auth-header">
+                    <div class="logo">
+                        <span class="logo-icon">⚽</span>
+                        <span class="logo-text">ArenaKuy!</span>
+                    </div>
+                    <h2 class="auth-title">Sign In Here!</h2>
+                </div>
+                
+                <form class="form" onsubmit="handleSignIn(event)">
+                    <div class="form-group">
+                        <label for="email">Email or Phone Number</label>
+                        <input type="text" id="email" name="email" placeholder="Email or Phone Number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Sign In</button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="signup.html" class="auth-link">Sign Up Here</a></p>
+                    <p><a href="index.html" class="auth-link">Back to Home</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
