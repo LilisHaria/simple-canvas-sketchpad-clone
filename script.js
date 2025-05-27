@@ -1,4 +1,3 @@
-
 // Navigation functions
 function goToSignIn() {
     window.location.href = 'signin.html';
@@ -17,69 +16,122 @@ function toggleSidebar() {
     overlay.classList.toggle('active');
 }
 
-// Mobile menu functions
-function toggleMobileMenu() {
-    const mobileMenu = document.getElementById('mobileMenu');
-    mobileMenu.classList.toggle('active');
+// Search functionality
+function handleSearch(event) {
+    event.preventDefault();
+    const searchTerm = event.target.querySelector('input').value.toLowerCase();
+    
+    if (!searchTerm) {
+        alert('Masukkan kata kunci pencarian');
+        return;
+    }
+    
+    // Send search request to PHP backend
+    fetch('search.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'search=' + encodeURIComponent(searchTerm)
+    })
+    .then(response => response.json())
+    .then(data => {
+        displaySearchResults(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat pencarian');
+    });
 }
 
-// Form handling
+function displaySearchResults(results) {
+    const arenaResults = document.getElementById('arenaResults');
+    
+    if (results.length === 0) {
+        arenaResults.innerHTML = '<div class="col-12 text-center"><p>Tidak ada lapangan yang ditemukan</p></div>';
+        return;
+    }
+    
+    arenaResults.innerHTML = results.map(arena => `
+        <div class="col-md-4 mb-4">
+            <div class="card arena-card h-100">
+                <img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=400&h=300&fit=crop" class="card-img-top" alt="${arena.nama_lapangan}">
+                <div class="card-body">
+                    <h5 class="card-title">${arena.nama_lapangan}</h5>
+                    <p class="card-text">Lokasi: ${arena.lokasi || 'Tidak tersedia'}</p>
+                    <p class="card-text">Harga per jam: Rp ${arena.harga_per_jam || '0'}</p>
+                    <button class="btn btn-primary" onclick="bookArena('${arena.nama_lapangan}')">Book Now</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function bookArena(arenaName) {
+    alert(`Anda memilih ${arenaName}! Silakan login terlebih dahulu untuk melakukan booking.`);
+    goToSignIn();
+}
+
+// Form handling with PHP backend
 function handleSignIn(event) {
     event.preventDefault();
     
     const formData = new FormData(event.target);
-    const email = formData.get('email');
-    const password = formData.get('password');
     
-    // Simple validation
-    if (!email || !password) {
-        alert('Please fill in all fields');
-        return;
-    }
-    
-    // Here you would typically send the data to a server
-    console.log('Sign in attempt:', { email, password });
-    
-    // For demo purposes, show success message
-    alert('Sign in successful! (This is a demo)');
-    
-    // Redirect to home page
-    window.location.href = 'index.html';
+    fetch('auth.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Login berhasil!');
+            localStorage.setItem('user', JSON.stringify(data.user));
+            window.location.href = 'index.html';
+        } else {
+            alert(data.message || 'Login gagal');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan');
+    });
 }
 
 function handleSignUp(event) {
     event.preventDefault();
     
     const formData = new FormData(event.target);
-    const username = formData.get('username');
-    const email = formData.get('email');
     const password = formData.get('password');
     const confirmPassword = formData.get('confirmPassword');
     
-    // Validation
-    if (!username || !email || !password || !confirmPassword) {
-        alert('Please fill in all fields');
-        return;
-    }
-    
     if (password !== confirmPassword) {
-        alert('Passwords do not match');
+        alert('Password tidak cocok');
         return;
     }
     
     if (password.length < 6) {
-        alert('Password must be at least 6 characters long');
+        alert('Password minimal 6 karakter');
         return;
     }
     
-    // Here you would typically send the data to a server
-    console.log('Sign up attempt:', { username, email, password });
-    
-    // For demo purposes, show success message
-    alert('Sign up successful! (This is a demo)');
-    
-    // Redirect to sign in page
-    window.location.href = 'signin.html';
+    fetch('register.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Registrasi berhasil! Silakan login.');
+            window.location.href = 'signin.html';
+        } else {
+            alert(data.message || 'Registrasi gagal');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan');
+    });
 }
 
 // Document ready functions
@@ -113,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const arenaCards = document.querySelectorAll('.arena-card');
     arenaCards.forEach(card => {
         card.addEventListener('click', function() {
-            const arenaName = this.querySelector('h4').textContent;
+            const arenaName = this.querySelector('h5').textContent;
             alert(`You selected ${arenaName}! (This is a demo - booking functionality would go here)`);
         });
     });

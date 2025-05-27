@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ArenaKuy! - Futsal Field Booking Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <!-- Sidebar -->
@@ -16,9 +18,10 @@
             <button class="sidebar-close" onclick="toggleSidebar()">&times;</button>
         </div>
         <div class="sidebar-content">
-            <a href="#" class="sidebar-item active">Dashboard</a>
-            <a href="#" class="sidebar-item">My Booking</a>
-            <a href="#" class="sidebar-item">Timetable</a>
+            <a href="#" class="sidebar-item active"><i class="fas fa-home me-2"></i>Dashboard</a>
+            <a href="#" class="sidebar-item"><i class="fas fa-calendar me-2"></i>My Booking</a>
+            <a href="#" class="sidebar-item"><i class="fas fa-table me-2"></i>Timetable</a>
+            <a href="#" class="sidebar-item"><i class="fas fa-search me-2"></i>Search Arena</a>
         </div>
     </div>
 
@@ -26,37 +29,57 @@
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
     <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <button class="sidebar-toggle" onclick="toggleSidebar()">
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <button class="sidebar-toggle me-3" onclick="toggleSidebar()">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-                <span class="logo-icon">⚽</span>
-                <span class="logo-text">ArenaKuy!</span>
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <span class="logo-icon">⚽</span>
+                    <span class="logo-text ms-2">ArenaKuy!</span>
+                </a>
             </div>
-            <div class="nav-menu">
-                <a href="#" class="nav-link">Home</a>
-                <a href="#" class="nav-link">Booking</a>
-                <a href="#" class="nav-link">History</a>
-                <button class="btn-signin" onclick="goToSignIn()">Sign In</button>
-            </div>
-            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+            
+            <!-- Search Form -->
+            <form class="d-none d-md-flex mx-auto" style="width: 300px;" onsubmit="handleSearch(event)">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Cari lapangan..." id="searchInput">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Booking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">History</a></li>
+                    <li class="nav-item">
+                        <button class="btn btn-primary ms-2" onclick="goToSignIn()">Sign In</button>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu">
-        <a href="#" class="mobile-nav-link">Home</a>
-        <a href="#" class="mobile-nav-link">Booking</a>
-        <a href="#" class="mobile-nav-link">History</a>
-        <button class="btn-signin mobile" onclick="goToSignIn()">Sign In</button>
+    <!-- Mobile Search -->
+    <div class="container d-md-none mt-3 pt-5">
+        <form onsubmit="handleSearch(event)">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Cari lapangan..." id="mobileSearchInput">
+                <button class="btn btn-outline-primary" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
     </div>
 
     <!-- Hero Section -->
@@ -66,42 +89,52 @@
                 <h1>Your Futsal Field Booking Platform</h1>
                 <h2 class="hero-title">ArenaKuy!</h2>
                 <p class="hero-subtitle">Find the best futsal facilities, schedule with the best futsal courts to suit your needs, from various equipment.</p>
-                <button class="btn-cta" onclick="goToSignUp()">Sign Up Here!</button>
+                <button class="btn btn-warning btn-lg" onclick="goToSignUp()">Sign Up Here!</button>
             </div>
         </div>
         <div class="hero-overlay"></div>
     </section>
 
     <!-- Arena Selection -->
-    <section class="arena-section">
+    <section class="arena-section py-5">
         <div class="container">
-            <h3 class="section-title">Choose Your Favourite Arena!</h3>
-            <div class="arena-grid">
-                <div class="arena-card">
-                    <img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=400&h=300&fit=crop" alt="Arena Indoor">
-                    <div class="arena-info">
-                        <h4>Arena Indoor</h4>
-                        <p>Premium indoor facility with air conditioning</p>
+            <h3 class="text-center mb-5">Choose Your Favourite Arena!</h3>
+            <div class="row" id="arenaResults">
+                <div class="col-md-4 mb-4">
+                    <div class="card arena-card h-100">
+                        <img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=400&h=300&fit=crop" class="card-img-top" alt="Arena Indoor">
+                        <div class="card-body">
+                            <h5 class="card-title">Arena Indoor</h5>
+                            <p class="card-text">Premium indoor facility with air conditioning</p>
+                            <button class="btn btn-primary" onclick="bookArena('Arena Indoor')">Book Now</button>
+                        </div>
                     </div>
                 </div>
-                <div class="arena-card">
-                    <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop" alt="Arena Outdoor">
-                    <div class="arena-info">
-                        <h4>Arena Outdoor</h4>
-                        <p>Natural grass field for authentic experience</p>
+                <div class="col-md-4 mb-4">
+                    <div class="card arena-card h-100">
+                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop" class="card-img-top" alt="Arena Outdoor">
+                        <div class="card-body">
+                            <h5 class="card-title">Arena Outdoor</h5>
+                            <p class="card-text">Natural grass field for authentic experience</p>
+                            <button class="btn btn-primary" onclick="bookArena('Arena Outdoor')">Book Now</button>
+                        </div>
                     </div>
                 </div>
-                <div class="arena-card">
-                    <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&h=300&fit=crop" alt="Arena Synthetic">
-                    <div class="arena-info">
-                        <h4>Arena Synthetic</h4>
-                        <p>Modern synthetic turf with professional standards</p>
+                <div class="col-md-4 mb-4">
+                    <div class="card arena-card h-100">
+                        <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&h=300&fit=crop" class="card-img-top" alt="Arena Synthetic">
+                        <div class="card-body">
+                            <h5 class="card-title">Arena Synthetic</h5>
+                            <p class="card-text">Modern synthetic turf with professional standards</p>
+                            <button class="btn btn-primary" onclick="bookArena('Arena Synthetic')">Book Now</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
