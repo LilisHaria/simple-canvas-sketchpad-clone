@@ -27,15 +27,30 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Fungsi untuk cek login
+// Fungsi untuk cek login pelanggan
 function isLoggedIn() {
-    return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
+    return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) && 
+           isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'pelanggan';
 }
 
-// Fungsi untuk redirect jika belum login
+// Fungsi untuk cek login admin
+function isAdminLoggedIn() {
+    return isset($_SESSION['admin_id']) && !empty($_SESSION['admin_id']) && 
+           isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin';
+}
+
+// Fungsi untuk redirect jika belum login (pelanggan)
 function requireLogin() {
     if (!isLoggedIn()) {
-        header('Location: login.php');
+        header('Location: auth/login_pelanggan.php');
+        exit;
+    }
+}
+
+// Fungsi untuk redirect jika belum login (admin)
+function requireAdminLogin() {
+    if (!isAdminLoggedIn()) {
+        header('Location: ../auth/login_admin.php');
         exit;
     }
 }
