@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['full_name'] = $user['full_name'];
                 $_SESSION['email'] = $user['email'];
+                $_SESSION['user_type'] = 'user';
                 
                 header('Location: ../dashboard.php');
                 exit;
@@ -48,6 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <h2 style="color: #333; margin-bottom: 10px;">Login ke ArenaKuy</h2>
             <p style="color: #666;">Masuk untuk melakukan booking</p>
         </div>
+        
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="alert alert-success">
+                <?= $_SESSION['success'] ?>
+                <?php unset($_SESSION['success']); ?>
+            </div>
+        <?php endif; ?>
         
         <?php if (isset($error)): ?>
             <div class="alert alert-danger"><?= $error ?></div>
