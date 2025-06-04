@@ -2,13 +2,39 @@
 // Main JavaScript untuk ArenaKuy
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-
-    // Smooth scrolling for anchor links
+    // Sidebar Toggle
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.querySelector('.main-content');
+    
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        });
+    }
+    
+    // Mobile Sidebar
+    if (window.innerWidth <= 768) {
+        sidebar.classList.add('collapsed');
+        mainContent.classList.add('expanded');
+        
+        // Show sidebar on mobile when toggle clicked
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+        }
+        
+        // Hide sidebar when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+    }
+    
+    // Smooth scrolling untuk anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -22,40 +48,35 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Auto-hide alerts after 5 seconds
+    // Auto-hide alerts
     setTimeout(function() {
         const alerts = document.querySelectorAll('.alert');
         alerts.forEach(function(alert) {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
         });
     }, 5000);
 
     // Form validation
-    const forms = document.querySelectorAll('.needs-validation');
+    const forms = document.querySelectorAll('form');
     forms.forEach(function(form) {
         form.addEventListener('submit', function(event) {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            form.classList.add('was-validated');
-        });
-    });
-
-    // Loading state for buttons
-    const submitButtons = document.querySelectorAll('button[type="submit"]');
-    submitButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            const original = this.innerHTML;
-            this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
-            this.disabled = true;
+            const requiredFields = form.querySelectorAll('[required]');
+            let valid = true;
             
-            // Re-enable after 3 seconds (fallback)
-            setTimeout(() => {
-                this.innerHTML = original;
-                this.disabled = false;
-            }, 3000);
+            requiredFields.forEach(function(field) {
+                if (!field.value.trim()) {
+                    valid = false;
+                    field.style.borderColor = '#ef4444';
+                } else {
+                    field.style.borderColor = '#e1e5e9';
+                }
+            });
+            
+            if (!valid) {
+                event.preventDefault();
+                alert('Mohon lengkapi semua field yang required');
+            }
         });
     });
 });
@@ -78,14 +99,19 @@ function formatDate(dateString) {
     });
 }
 
-// Search functionality
-function performSearch(query) {
-    const searchParams = new URLSearchParams();
-    searchParams.append('search', query);
-    window.location.href = 'search.php?' + searchParams.toString();
+// Loading state untuk buttons
+function showLoading(button) {
+    const original = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    button.disabled = true;
+    
+    return function() {
+        button.innerHTML = original;
+        button.disabled = false;
+    };
 }
 
-// Show confirmation dialog
+// Konfirmasi aksi
 function confirmAction(message, callback) {
     if (confirm(message)) {
         callback();
