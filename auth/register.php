@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <div style="text-align: center;">
             <p>Sudah punya akun? <a href="login.php" style="color: #667eea; text-decoration: none;">Login di sini</a></p>
-            <a href="../index.php" style="color: #666; text-decoration: none;">
+            <a href="../dashboard.php" style="color: #666; text-decoration: none;">
                 <i class="fas fa-arrow-left"></i> Kembali ke Beranda
             </a>
         </div>
