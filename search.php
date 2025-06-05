@@ -1,209 +1,271 @@
-
 <?php
-require_once 'config/koneksi.php';
+$page_title = 'Pencarian Arena';
+$base_path = '';
+require_once 'config/database.php';
+require_once 'includes/header.php';
 
-// Handle search
-$search = $_GET['search'] ?? '';
-$tipe = $_GET['tipe'] ?? '';
+$search_query = isset($_GET['q']) ? trim($_GET['q']) : '';
+$arenas = [];
 
-$sql = "SELECT * FROM lapangan WHERE 1=1";
-$params = [];
-
-if (!empty($search)) {
-    $sql .= " AND (nama_lapangan LIKE ? OR tipe LIKE ?)";
-    $params[] = "%$search%";
-    $params[] = "%$search%";
+if (!empty($search_query)) {
+    try {
+        $stmt = $pdo->prepare("
+            SELECT * FROM arenas 
+            WHERE is_active = TRUE 
+            AND (arena_name LIKE ? OR location LIKE ? OR description LIKE ?)
+            ORDER BY arena_name
+        ");
+        $search_param = '%' . $search_query . '%';
+        $stmt->execute([$search_param, $search_param, $search_param]);
+        $arenas = $stmt->fetchAll();
+    } catch (PDOException $e) {
+        error_log("Search error: " . $e->getMessage());
+    }
 }
-
-if (!empty($tipe)) {
-    $sql .= " AND tipe = ?";
-    $params[] = $tipe;
-}
-
-$sql .= " ORDER BY nama_lapangan";
-
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$lapangan_list = $stmt->fetchAll();
-
-// Get available jadwal
-$jadwal_stmt = $pdo->prepare("SELECT * FROM jadwal WHERE status = 'available' ORDER BY jam_mulai");
-$jadwal_stmt->execute();
-$jadwal_list = $jadwal_stmt->fetchAll();
 ?>
 
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cari Arena - ArenaKuy!</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-    <?php include 'includes/navbar.php'; ?>
-
-    <div class="container mt-5 pt-5">
-        <!-- Search Form -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-search me-2"></i>Cari Arena</h5>
-            </div>
-            <div class="card-body">
-                <form method="GET" class="row g-3">
-                    <div class="col-md-6">
-                        <input type="text" class="form-control" name="search" 
-                               placeholder="Cari nama lapangan..." value="<?= htmlspecialchars($search) ?>">
-                    </div>
-                    <div class="col-md-4">
-                        <select class="form-select" name="tipe">
-                            <option value="">Semua Tipe</option>
-                            <option value="Indoor" <?= $tipe == 'Indoor' ? 'selected' : '' ?>>Indoor</option>
-                            <option value="Outdoor" <?= $tipe == 'Outdoor' ? 'selected' : '' ?>>Outdoor</option>
-                            <option value="Synthetic" <?= $tipe == 'Synthetic' ? 'selected' : '' ?>>Synthetic</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-search"></i> Cari
-                        </button>
-                    </div>
-                </form>
-            </div>
+<div class="search-results-page">
+    <div class="container">
+        <div class="search-header-section">
+            <h1>Hasil Pencarian</h1>
+            <?php if (!empty($search_query)): ?>
+                <p>Menampilkan hasil untuk: "<strong><?= htmlspecialchars($search_query) ?></strong>"</p>
+                <p class="results-count"><?= count($arenas) ?> arena ditemukan</p>
+            <?php else: ?>
+                <p>Masukkan kata kunci untuk mencari arena</p>
+            <?php endif; ?>
         </div>
 
-        <!-- Results -->
-        <div class="row">
-            <?php if (empty($lapangan_list)): ?>
-                <div class="col-12">
-                    <div class="text-center py-5">
-                        <i class="fas fa-search text-muted fa-3x mb-3"></i>
-                        <h4>Arena tidak ditemukan</h4>
-                        <p class="text-muted">Coba ubah kata kunci pencarian Anda</p>
-                    </div>
-                </div>
-            <?php else: ?>
-                <?php foreach ($lapangan_list as $lapangan): ?>
-                    <div class="col-md-6 col-lg-4 mb-4">
-                        <div class="card h-100 shadow-sm">
-                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                <i class="fas fa-futbol fa-3x text-muted"></i>
+        <?php if (!empty($arenas)): ?>
+            <div class="arena-grid">
+                <?php foreach ($arenas as $arena): ?>
+                    <div class="arena-card">
+                        <div class="arena-image">
+                            <?php if ($arena['image_url']): ?>
+                                <img src="<?= htmlspecialchars($arena['image_url']) ?>" alt="<?= htmlspecialchars($arena['arena_name']) ?>">
+                            <?php else: ?>
+                                <div class="arena-placeholder">
+                                    <i class="fas fa-futbol"></i>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="arena-info">
+                            <h3><?= htmlspecialchars($arena['arena_name']) ?></h3>
+                            <p class="arena-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <?= htmlspecialchars($arena['location']) ?>
+                            </p>
+                            <p class="arena-description"><?= htmlspecialchars($arena['description']) ?></p>
+                            <div class="arena-price">
+                                <span class="price">Rp <?= number_format($arena['price_per_hour'], 0, ',', '.') ?></span>
+                                <span class="per-hour">/jam</span>
                             </div>
-                            <div class="card-body">
-                                <h5 class="card-title"><?= htmlspecialchars($lapangan['nama_lapangan']) ?></h5>
-                                <p class="card-text">
-                                    <span class="badge bg-primary"><?= htmlspecialchars($lapangan['tipe']) ?></span><br>
-                                    <strong>Harga:</strong> Rp <?= number_format($lapangan['harga'], 0, ',', '.') ?>/jam
-                                </p>
-                                <?php if (isLoggedIn()): ?>
-                                    <button class="btn btn-primary w-100" onclick="showBookingModal(<?= $lapangan['id_lapangan'] ?>, '<?= htmlspecialchars($lapangan['nama_lapangan']) ?>', <?= $lapangan['harga'] ?>)">
-                                        <i class="fas fa-calendar-plus me-2"></i>Book Sekarang
-                                    </button>
-                                <?php else: ?>
-                                    <a href="auth/login.php" class="btn btn-outline-primary w-100">
-                                        Login untuk Booking
-                                    </a>
-                                <?php endif; ?>
-                            </div>
+                            <a href="booking.php?arena_id=<?= $arena['arena_id'] ?>" class="btn btn-book">Book Sekarang</a>
                         </div>
                     </div>
                 <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- Booking Modal -->
-    <?php if (isLoggedIn()): ?>
-    <div class="modal fade" id="bookingModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Booking Arena</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form id="bookingForm" method="POST" action="process-booking.php">
-                    <div class="modal-body">
-                        <input type="hidden" name="id_lapangan" id="modal_id_lapangan">
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Lapangan</label>
-                            <input type="text" class="form-control" id="modal_nama_lapangan" readonly>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Tanggal</label>
-                            <input type="date" class="form-control" name="tanggal" 
-                                   min="<?= date('Y-m-d') ?>" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Waktu</label>
-                            <select class="form-select" name="id_jadwal" required>
-                                <option value="">Pilih Waktu</option>
-                                <?php foreach ($jadwal_list as $jadwal): ?>
-                                    <option value="<?= $jadwal['id_jadwal'] ?>">
-                                        <?= substr($jadwal['jam_mulai'], 0, 5) ?> - <?= substr($jadwal['jam_selesai'], 0, 5) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Durasi (jam)</label>
-                            <select class="form-select" name="durasi" required>
-                                <option value="1">1 Jam</option>
-                                <option value="2">2 Jam</option>
-                                <option value="3">3 Jam</option>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Catatan (opsional)</label>
-                            <textarea class="form-control" name="catatan" rows="3"></textarea>
-                        </div>
-                        
-                        <div class="alert alert-info">
-                            <strong>Total Harga:</strong> <span id="total_harga">Rp 0</span>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Konfirmasi Booking</button>
-                    </div>
-                </form>
             </div>
-        </div>
+        <?php elseif (!empty($search_query)): ?>
+            <div class="no-results">
+                <div class="no-results-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Tidak ada arena ditemukan</h3>
+                <p>Coba gunakan kata kunci yang berbeda atau lihat semua arena tersedia</p>
+                <a href="arenas.php" class="btn btn-primary">Lihat Semua Arena</a>
+            </div>
+        <?php endif; ?>
     </div>
-    <?php endif; ?>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        let currentHarga = 0;
-        
-        function showBookingModal(id, nama, harga) {
-            currentHarga = harga;
-            document.getElementById('modal_id_lapangan').value = id;
-            document.getElementById('modal_nama_lapangan').value = nama;
-            updateTotalHarga();
-            
-            const modal = new bootstrap.Modal(document.getElementById('bookingModal'));
-            modal.show();
-        }
-        
-        function updateTotalHarga() {
-            const durasi = document.querySelector('select[name="durasi"]').value || 1;
-            const total = currentHarga * durasi;
-            document.getElementById('total_harga').textContent = 'Rp ' + total.toLocaleString('id-ID');
-        }
-        
-        // Update total harga ketika durasi berubah
-        document.addEventListener('change', function(e) {
-            if (e.target.name === 'durasi') {
-                updateTotalHarga();
-            }
-        });
-    </script>
-</body>
-</html>
+<style>
+.search-results-page {
+    padding: 100px 20px 60px;
+    min-height: calc(100vh - 70px);
+}
+
+.search-header-section {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.search-header-section h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.search-header-section p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.results-count {
+    color: #2D7298 !important;
+    font-weight: 600;
+}
+
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.no-results-icon {
+    font-size: 4rem;
+    color: #ddd;
+    margin-bottom: 30px;
+}
+
+.no-results h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.no-results p {
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.arena-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+}
+
+.arena-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.arena-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.arena-image {
+    height: 200px;
+    background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+    position: relative;
+    overflow: hidden;
+}
+
+.arena-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.arena-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 4rem;
+    color: #999;
+}
+
+.arena-info {
+    padding: 25px;
+}
+
+.arena-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.arena-location {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.arena-location i {
+    margin-right: 5px;
+}
+
+.arena-description {
+    color: #777;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.arena-price {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 20px;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #10b981;
+}
+
+.per-hour {
+    margin-left: 5px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-primary {
+    background: #ffd700;
+    color: #333;
+}
+
+.btn-primary:hover {
+    background: #ffed4e;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255,215,0,0.4);
+}
+
+.btn-book {
+    background: #10b981;
+    color: white;
+    width: 100%;
+}
+
+.btn-book:hover {
+    background: #059669;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .search-results-page {
+        padding: 90px 15px 40px;
+    }
+    
+    .search-header-section h1 {
+        font-size: 2rem;
+    }
+    
+    .arena-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<?php require_once 'includes/footer.php'; ?>

@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sidebarToggle.addEventListener('click', function() {
             sidebar.classList.add('active');
             sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
         });
     }
     
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (sidebar) {
             sidebar.classList.remove('active');
             sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
         }
     }
     
@@ -97,20 +99,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Highlight active menu item
-    const currentPage = window.location.pathname.split('/').pop() || 'index.php';
+    const currentPage = window.location.pathname.split('/').pop() || 'dashboard.php';
     const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
     const navLinks = document.querySelectorAll('.nav-link');
     
     sidebarLinks.forEach(link => {
         const href = link.getAttribute('href');
-        if (href && (href.includes(currentPage) || (currentPage === 'index.php' && href.includes('index.php')))) {
+        if (href && (href.includes(currentPage) || 
+            (currentPage === 'dashboard.php' && href.includes('dashboard.php')) ||
+            (currentPage === 'index.php' && href.includes('dashboard.php')))) {
             link.classList.add('active');
         }
     });
     
     navLinks.forEach(link => {
         const href = link.getAttribute('href');
-        if (href && (href.includes(currentPage) || (currentPage === 'index.php' && href.includes('index.php')))) {
+        if (href && (href.includes(currentPage) || 
+            (currentPage === 'dashboard.php' && href.includes('dashboard.php')) ||
+            (currentPage === 'index.php' && href.includes('dashboard.php')))) {
             link.style.background = 'rgba(255, 215, 0, 0.2)';
             link.style.borderRadius = '20px';
         }
@@ -161,6 +167,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Responsive sidebar handling
+    function handleResize() {
+        if (window.innerWidth > 768) {
+            // Desktop: close mobile dropdown
+            if (mobileDropdownMenu) {
+                mobileDropdownMenu.classList.remove('active');
+            }
+        }
+        
+        if (window.innerWidth <= 480 && sidebar && sidebar.classList.contains('active')) {
+            // Very small screens: ensure sidebar doesn't cover too much
+            sidebar.style.width = '220px';
+        }
+    }
+    
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Call once on load
 });
 
 // Utility functions

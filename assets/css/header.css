@@ -300,8 +300,8 @@
 .sidebar {
     position: fixed;
     top: 0;
-    left: -300px;
-    width: 300px;
+    left: -280px;
+    width: 280px;
     height: 100vh;
     background: linear-gradient(135deg, #2D7298 0%, #1a5a7a 100%);
     color: white;
@@ -360,7 +360,8 @@
     transition: all 0.3s;
 }
 
-.sidebar-menu a:hover {
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
     background: rgba(255, 255, 255, 0.1);
     color: white;
     border-right: 3px solid #ffd700;
@@ -417,9 +418,12 @@
     .header-actions {
         gap: 10px;
     }
-}
-
-@media (max-width: 480px) {
+    
+    .sidebar {
+        width: 250px;
+        left: -250px;
+    }
+    
     .logo span {
         font-size: 1.2rem;
     }
@@ -434,5 +438,29 @@
     
     .search-header, .search-form {
         padding: 15px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 220px;
+        left: -220px;
+    }
+    
+    .logo span {
+        font-size: 1.1rem;
+    }
+    
+    .logo i {
+        font-size: 1.4rem;
+    }
+    
+    .sidebar-menu a {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .sidebar-header {
+        padding: 15px;
     }
 }

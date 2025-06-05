@@ -33,7 +33,7 @@ if (file_exists(__DIR__ . '/../config/database.php')) {
             </button>
             
             <!-- Logo -->
-            <a href="<?= isset($base_path) ? $base_path : '' ?>index.php" class="logo">
+            <a href="<?= isset($base_path) ? $base_path : '' ?>dashboard.php" class="logo">
                 <i class="fas fa-futbol"></i>
                 <span>ArenaKuy!</span>
             </a>
@@ -80,9 +80,9 @@ if (file_exists(__DIR__ . '/../config/database.php')) {
             
             <!-- Navigation Menu (Desktop) -->
             <nav class="main-nav">
-                <a href="<?= isset($base_path) ? $base_path : '' ?>index.php" class="nav-link">
+                <a href="<?= isset($base_path) ? $base_path : '' ?>dashboard.php" class="nav-link">
                     <i class="fas fa-home"></i>
-                    <span>Beranda</span>
+                    <span>Dashboard</span>
                 </a>
                 <a href="<?= isset($base_path) ? $base_path : '' ?>arenas.php" class="nav-link">
                     <i class="fas fa-calendar-check"></i>
@@ -146,7 +146,7 @@ if (file_exists(__DIR__ . '/../config/database.php')) {
         
         <div class="sidebar-content">
             <ul class="sidebar-menu">
-                <li><a href="<?= isset($base_path) ? $base_path : '' ?>index.php"><i class="fas fa-home"></i> Beranda</a></li>
+                <li><a href="<?= isset($base_path) ? $base_path : '' ?>dashboard.php"><i class="fas fa-home"></i> Dashboard</a></li>
                 <li><a href="<?= isset($base_path) ? $base_path : '' ?>arenas.php"><i class="fas fa-map-marker-alt"></i> Pilih Arena</a></li>
                 
                 <?php if (isLoggedIn()): ?>
