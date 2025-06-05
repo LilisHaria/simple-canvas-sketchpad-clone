@@ -3,8 +3,8 @@
 // Konfigurasi database Hostinger
 $host = 'localhost';
 $dbname = 'u985354573_arenakuy';
-$username = 'u985354573_arenakuy'; // Sesuaikan dengan username database Anda
-$password = 'your_database_password'; // Ganti dengan password database Anda
+$username = 'u985354573_arenakuy_lilis'; // Username yang benar
+$password = '0909loqweA@#$'; // Password yang benar
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
