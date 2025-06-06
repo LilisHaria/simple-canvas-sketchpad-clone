@@ -9,6 +9,11 @@ if (session_status() == PHP_SESSION_NONE) {
 if (file_exists(__DIR__ . '/../config/database.php')) {
     require_once __DIR__ . '/../config/database.php';
 }
+
+// Function to check if user is admin
+function isAdmin() {
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
+}
 ?>
 
 <!DOCTYPE html>
@@ -51,19 +56,37 @@ if (file_exists(__DIR__ . '/../config/database.php')) {
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="mobile-dropdown-menu" id="mobileDropdownMenu">
-                        <a href="<?= isset($base_path) ? $base_path : '' ?>arenas.php">
-                            <i class="fas fa-calendar-check"></i>
-                            <span>Booking</span>
-                        </a>
-                        <a href="<?= isset($base_path) ? $base_path : '' ?>history.php">
-                            <i class="fas fa-history"></i>
-                            <span>History</span>
-                        </a>
-                        <?php if (isLoggedIn()): ?>
-                            <a href="<?= isset($base_path) ? $base_path : '' ?>my-bookings.php">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>My Bookings</span>
+                        <?php if (isAdmin()): ?>
+                            <a href="<?= isset($base_path) ? $base_path : '' ?>admin/kelola-lapangan.php">
+                                <i class="fas fa-building"></i>
+                                <span>Kelola Lapangan</span>
                             </a>
+                            <a href="<?= isset($base_path) ? $base_path : '' ?>admin/kelola-booking.php">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Kelola Booking</span>
+                            </a>
+                            <a href="<?= isset($base_path) ? $base_path : '' ?>admin/kelola-user.php">
+                                <i class="fas fa-users"></i>
+                                <span>Kelola User</span>
+                            </a>
+                            <a href="<?= isset($base_path) ? $base_path : '' ?>admin/laporan.php">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Laporan</span>
+                            </a>
+                        <?php else: ?>
+                            <a href="<?= isset($base_path) ? $base_path : '' ?>arenas.php">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Booking</span>
+                            </a>
+                        <?php endif; ?>
+                        
+                        <?php if (isLoggedIn()): ?>
+                            <?php if (!isAdmin()): ?>
+                                <a href="<?= isset($base_path) ? $base_path : '' ?>my-bookings.php">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Booking Saya</span>
+                                </a>
+                            <?php endif; ?>
                             <a href="<?= isset($base_path) ? $base_path : '' ?>auth/logout.php">
                                 <i class="fas fa-sign-out-alt"></i>
                                 <span>Logout</span>
@@ -84,20 +107,34 @@ if (file_exists(__DIR__ . '/../config/database.php')) {
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="<?= isset($base_path) ? $base_path : '' ?>arenas.php" class="nav-link">
-                    <i class="fas fa-calendar-check"></i>
-                    <span>Booking</span>
-                </a>
-                <a href="<?= isset($base_path) ? $base_path : '' ?>history.php" class="nav-link">
-                    <i class="fas fa-history"></i>
-                    <span>History</span>
-                </a>
+                
+                <?php if (isAdmin()): ?>
+                    <a href="<?= isset($base_path) ? $base_path : '' ?>admin/kelola-lapangan.php" class="nav-link">
+                        <i class="fas fa-building"></i>
+                        <span>Kelola Lapangan</span>
+                    </a>
+                    <a href="<?= isset($base_path) ? $base_path : '' ?>admin/kelola-booking.php" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Kelola Booking</span>
+                    </a>
+                    <a href="<?= isset($base_path) ? $base_path : '' ?>admin/laporan.php" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Laporan</span>
+                    </a>
+                <?php else: ?>
+                    <a href="<?= isset($base_path) ? $base_path : '' ?>arenas.php" class="nav-link">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Booking</span>
+                    </a>
+                <?php endif; ?>
                 
                 <?php if (isLoggedIn()): ?>
-                    <a href="<?= isset($base_path) ? $base_path : '' ?>my-bookings.php" class="nav-link dashboard-btn">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>My Bookings</span>
-                    </a>
+                    <?php if (!isAdmin()): ?>
+                        <a href="<?= isset($base_path) ? $base_path : '' ?>my-bookings.php" class="nav-link dashboard-btn">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Booking Saya</span>
+                        </a>
+                    <?php endif; ?>
                     <a href="<?= isset($base_path) ? $base_path : '' ?>auth/logout.php" class="nav-link sign-btn">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
@@ -147,11 +184,18 @@ if (file_exists(__DIR__ . '/../config/database.php')) {
         <div class="sidebar-content">
             <ul class="sidebar-menu">
                 <li><a href="<?= isset($base_path) ? $base_path : '' ?>dashboard.php"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="<?= isset($base_path) ? $base_path : '' ?>arenas.php"><i class="fas fa-map-marker-alt"></i> Pilih Arena</a></li>
+                
+                <?php if (isAdmin()): ?>
+                    <li><a href="<?= isset($base_path) ? $base_path : '' ?>admin/kelola-lapangan.php"><i class="fas fa-building"></i> Kelola Lapangan</a></li>
+                    <li><a href="<?= isset($base_path) ? $base_path : '' ?>admin/kelola-booking.php"><i class="fas fa-calendar-alt"></i> Kelola Booking</a></li>
+                    <li><a href="<?= isset($base_path) ? $base_path : '' ?>admin/kelola-user.php"><i class="fas fa-users"></i> Kelola User</a></li>
+                    <li><a href="<?= isset($base_path) ? $base_path : '' ?>admin/laporan.php"><i class="fas fa-chart-bar"></i> Laporan</a></li>
+                    <li><a href="<?= isset($base_path) ? $base_path : '' ?>my-bookings.php"><i class="fas fa-calendar-check"></i> Booking Saya</a></li>
+                <?php else: ?>
+                    <li><a href="<?= isset($base_path) ? $base_path : '' ?>arenas.php"><i class="fas fa-map-marker-alt"></i> Pilih Arena</a></li>
+                <?php endif; ?>
                 
                 <?php if (isLoggedIn()): ?>
-                    <li><a href="<?= isset($base_path) ? $base_path : '' ?>my-bookings.php"><i class="fas fa-calendar-check"></i> My Booking</a></li>
-                    <li><a href="<?= isset($base_path) ? $base_path : '' ?>history.php"><i class="fas fa-history"></i> History</a></li>
                     <li><a href="<?= isset($base_path) ? $base_path : '' ?>auth/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 <?php else: ?>
                     <li><a href="<?= isset($base_path) ? $base_path : '' ?>auth/login.php"><i class="fas fa-sign-in-alt"></i> Login</a></li>

@@ -32,11 +32,32 @@ function isLoggedIn() {
     return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 }
 
+// Fungsi untuk cek admin
+function isAdmin() {
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
+}
+
 // Fungsi untuk redirect jika belum login
 function requireLogin() {
     if (!isLoggedIn()) {
         header('Location: auth/login.php');
         exit;
     }
+}
+
+// Fungsi untuk redirect jika bukan admin
+function requireAdmin() {
+    if (!isAdmin()) {
+        header('Location: dashboard.php');
+        exit;
+    }
+}
+
+// Update session dengan role ketika login
+function setUserSession($user_data) {
+    $_SESSION['user_id'] = $user_data['user_id'] ?? $user_data['id'];
+    $_SESSION['user_name'] = $user_data['full_name'] ?? $user_data['name'];
+    $_SESSION['user_email'] = $user_data['email'];
+    $_SESSION['user_role'] = $user_data['role'] ?? 'user';
 }
 ?>

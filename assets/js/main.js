@@ -168,23 +168,71 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Responsive sidebar handling
+    // Enhanced responsive sidebar handling
     function handleResize() {
-        if (window.innerWidth > 768) {
-            // Desktop: close mobile dropdown
+        const isMobile = window.innerWidth <= 768;
+        const isSmallMobile = window.innerWidth <= 480;
+        
+        if (!isMobile) {
+            // Desktop: close mobile dropdown and ensure sidebar behaves correctly
             if (mobileDropdownMenu) {
                 mobileDropdownMenu.classList.remove('active');
             }
+            // Reset sidebar width for desktop
+            if (sidebar) {
+                sidebar.style.width = '';
+            }
+        } else {
+            // Mobile: adjust sidebar width based on screen size
+            if (sidebar) {
+                if (isSmallMobile) {
+                    sidebar.style.width = '220px';
+                } else {
+                    sidebar.style.width = '250px';
+                }
+            }
         }
         
-        if (window.innerWidth <= 480 && sidebar && sidebar.classList.contains('active')) {
-            // Very small screens: ensure sidebar doesn't cover too much
-            sidebar.style.width = '220px';
+        // Close sidebar if resizing from mobile to desktop while open
+        if (!isMobile && sidebar && sidebar.classList.contains('active')) {
+            closeSidebar();
         }
     }
     
     window.addEventListener('resize', handleResize);
     handleResize(); // Call once on load
+    
+    // Touch/swipe handling for mobile
+    if (window.innerWidth <= 768) {
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+        
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const swipeDistance = touchEndX - touchStartX;
+            
+            // Swipe right to open sidebar (from left edge)
+            if (swipeDistance > swipeThreshold && touchStartX < 50 && !sidebar.classList.contains('active')) {
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Swipe left to close sidebar
+            if (swipeDistance < -swipeThreshold && sidebar.classList.contains('active')) {
+                closeSidebar();
+            }
+        }
+    }
 });
 
 // Utility functions
@@ -223,3 +271,19 @@ function confirmAction(message, callback) {
         callback();
     }
 }
+
+// Enhanced mobile navigation
+function initMobileNavigation() {
+    const mainNav = document.querySelector('.main-nav');
+    const mobileToggle = document.querySelector('.mobile-dropdown-toggle');
+    
+    if (window.innerWidth <= 768 && mainNav) {
+        mainNav.style.display = 'none';
+    } else if (window.innerWidth > 768 && mainNav) {
+        mainNav.style.display = 'flex';
+    }
+}
+
+// Initialize mobile navigation on load and resize
+document.addEventListener('DOMContentLoaded', initMobileNavigation);
+window.addEventListener('resize', initMobileNavigation);
