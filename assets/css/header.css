@@ -5,7 +5,7 @@
     top: 0;
     left: 0;
     right: 0;
-    background-color: rgba(45, 114, 152, 0.7); /* #2D7298 dengan 70% opacity */
+    background-color: rgba(45, 114, 152, 0.95);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -397,7 +397,7 @@
     min-height: calc(100vh - 70px);
 }
 
-/* Responsive */
+/* Mobile Responsive (max-width: 768px) */
 @media (max-width: 768px) {
     .main-nav {
         display: none;
@@ -439,6 +439,25 @@
     .search-header, .search-form {
         padding: 15px 20px;
     }
+    
+    /* Mobile Header Adjustments */
+    .main-header {
+        height: 60px;
+    }
+    
+    .main-wrapper {
+        margin-top: 60px;
+        min-height: calc(100vh - 60px);
+    }
+    
+    .sidebar-toggle {
+        width: 25px;
+        height: 20px;
+    }
+    
+    .sidebar-toggle span {
+        height: 2px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -462,5 +481,34 @@
     
     .sidebar-header {
         padding: 15px;
+    }
+    
+    .main-header {
+        height: 55px;
+    }
+    
+    .main-wrapper {
+        margin-top: 55px;
+        min-height: calc(100vh - 55px);
+    }
+}
+
+/* Page specific styles */
+.page-content {
+    padding: 20px;
+    min-height: calc(100vh - 70px);
+}
+
+@media (max-width: 768px) {
+    .page-content {
+        padding: 15px;
+        min-height: calc(100vh - 60px);
+    }
+}
+
+@media (max-width: 480px) {
+    .page-content {
+        padding: 10px;
+        min-height: calc(100vh - 55px);
     }
 }
