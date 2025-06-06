@@ -1,5 +1,5 @@
 
-import { Calendar, Home, History, Search, User, MapPin } from "lucide-react"
+import { Calendar, Home, History, Search, User, MapPin, Users, FileText, BarChart3 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 
 import {
@@ -15,8 +15,8 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar"
 
-// Menu items
-const mainItems = [
+// Menu items for regular users
+const userMainItems = [
   {
     title: "Dashboard",
     url: "/",
@@ -26,11 +26,6 @@ const mainItems = [
     title: "Booking",
     url: "/booking",
     icon: Calendar,
-  },
-  {
-    title: "Riwayat",
-    url: "/history",
-    icon: History,
   },
   {
     title: "Cari Arena",
@@ -57,8 +52,40 @@ const arenaItems = [
   },
 ]
 
+// Menu items for admin users
+const adminMainItems = [
+  {
+    title: "Dashboard",
+    url: "/admin/dashboard",
+    icon: Home,
+  },
+  {
+    title: "Kelola Lapangan",
+    url: "/admin/arenas",
+    icon: MapPin,
+  },
+  {
+    title: "Kelola Booking",
+    url: "/admin/bookings",
+    icon: Calendar,
+  },
+  {
+    title: "Kelola User",
+    url: "/admin/users",
+    icon: Users,
+  },
+  {
+    title: "Laporan",
+    url: "/admin/reports",
+    icon: BarChart3,
+  },
+]
+
 export function AppSidebar() {
   const location = useLocation()
+  
+  // Simple role detection - in real app this would come from auth context
+  const isAdmin = location.pathname.startsWith('/admin')
 
   return (
     <Sidebar>
@@ -71,10 +98,12 @@ export function AppSidebar() {
       
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Menu Utama</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            {isAdmin ? "Menu Admin" : "Menu Utama"}
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainItems.map((item) => (
+              {(isAdmin ? adminMainItems : userMainItems).map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={location.pathname === item.url}>
                     <Link to={item.url}>
@@ -88,23 +117,43 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Pilihan Arena</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {arenaItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={location.pathname === item.url}>
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
+        {!isAdmin && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Pilihan Arena</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {arenaItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={location.pathname === item.url}>
+                      <Link to={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {isAdmin && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Lainnya</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={location.pathname === "/history"}>
+                    <Link to="/history">
+                      <History />
+                      <span>Booking Saya</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border">

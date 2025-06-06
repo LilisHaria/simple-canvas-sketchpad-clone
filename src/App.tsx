@@ -1,50 +1,52 @@
 
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import ERDPage from "./pages/ERD";
-import History from "./pages/History";
-import BookingIndoor from "./pages/BookingIndoor";
-import BookingOutdoor from "./pages/BookingOutdoor";
-import BookingSynthetic from "./pages/BookingSynthetic";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { SidebarProvider } from '@/components/ui/sidebar'
+import { AppSidebar } from '@/components/AppSidebar'
+import Index from '@/pages/Index'
+import BookingIndoor from '@/pages/BookingIndoor'
+import BookingOutdoor from '@/pages/BookingOutdoor'
+import BookingSynthetic from '@/pages/BookingSynthetic'
+import History from '@/pages/History'
+import NotFound from '@/pages/NotFound'
+import ERD from '@/pages/ERD'
+import AdminDashboard from '@/pages/AdminDashboard'
+import AdminArenas from '@/pages/AdminArenas'
+import AdminBookings from '@/pages/AdminBookings'
+import AdminUsers from '@/pages/AdminUsers'
+import AdminReports from '@/pages/AdminReports'
+import './App.css'
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
+function App() {
+  return (
+    <Router>
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
           <AppSidebar />
-          <SidebarInset>
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <SidebarTrigger className="-ml-1" />
-              <div className="flex items-center space-x-2">
-                <span className="text-lg font-semibold">ArenaKuy! Dashboard</span>
-              </div>
-            </header>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/erd" element={<ERDPage />} />
-                <Route path="/history" element={<History />} />
-                <Route path="/booking/indoor" element={<BookingIndoor />} />
-                <Route path="/booking/outdoor" element={<BookingOutdoor />} />
-                <Route path="/booking/synthetic" element={<BookingSynthetic />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </SidebarInset>
+          <main className="flex-1">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/booking" element={<Index />} />
+              <Route path="/booking/indoor" element={<BookingIndoor />} />
+              <Route path="/booking/outdoor" element={<BookingOutdoor />} />
+              <Route path="/booking/synthetic" element={<BookingSynthetic />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/search" element={<Index />} />
+              <Route path="/erd" element={<ERD />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/arenas" element={<AdminArenas />} />
+              <Route path="/admin/bookings" element={<AdminBookings />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/reports" element={<AdminReports />} />
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
         </div>
       </SidebarProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    </Router>
+  )
+}
 
-export default App;
+export default App
