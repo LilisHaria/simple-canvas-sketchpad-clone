@@ -1,14 +1,16 @@
 
 <?php
-// Start session
+// Start session dan include database
 session_start();
-
-// Include database configuration
 require_once 'config/database.php';
 
-// Redirect ke dashboard jika sudah login
+// Jika sudah login, redirect sesuai role
 if (isLoggedIn()) {
-    header('Location: dashboard.php');
+    if (isAdmin()) {
+        header('Location: admin/dashboard.php');
+    } else {
+        header('Location: dashboard.php');
+    }
     exit;
 }
 ?>
@@ -31,8 +33,8 @@ if (isLoggedIn()) {
                     <span>ArenaKuy</span>
                 </div>
                 <nav class="nav-links">
-                    <a href="auth/login.php" class="btn btn-outline">Login</a>
-                    <a href="auth/register.php" class="btn btn-primary">Daftar</a>
+                    <a href="login.php" class="btn btn-outline">Login</a>
+                    <a href="register.php" class="btn btn-primary">Daftar</a>
                 </nav>
                 <!-- Mobile Menu Toggle -->
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -43,11 +45,11 @@ if (isLoggedIn()) {
             </div>
             <!-- Mobile Menu -->
             <div class="mobile-menu" id="mobileMenu">
-                <a href="auth/login.php" class="mobile-menu-item">
+                <a href="login.php" class="mobile-menu-item">
                     <i class="fas fa-sign-in-alt"></i>
                     Login
                 </a>
-                <a href="auth/register.php" class="mobile-menu-item">
+                <a href="register.php" class="mobile-menu-item">
                     <i class="fas fa-user-plus"></i>
                     Daftar
                 </a>
@@ -61,10 +63,10 @@ if (isLoggedIn()) {
                     <h1>Booking Lapangan Futsal Jadi Mudah!</h1>
                     <p>Platform terpercaya untuk booking lapangan futsal di seluruh Indonesia. Cari, pilih, dan booking lapangan favorit Anda dengan mudah.</p>
                     <div class="hero-buttons">
-                        <a href="auth/register.php" class="btn btn-primary btn-large">
+                        <a href="register.php" class="btn btn-primary btn-large">
                             <i class="fas fa-user-plus"></i> Daftar Sekarang
                         </a>
-                        <a href="auth/login.php" class="btn btn-outline btn-large">
+                        <a href="login.php" class="btn btn-outline btn-large">
                             <i class="fas fa-sign-in-alt"></i> Login
                         </a>
                     </div>

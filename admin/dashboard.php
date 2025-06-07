@@ -3,6 +3,8 @@
 require_once '../config/database.php';
 requireAdmin();
 
+$error = '';
+
 // Get statistics
 try {
     // Total users
@@ -50,6 +52,7 @@ try {
     <title>Dashboard Admin - ArenaKuy</title>
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/header.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -60,8 +63,8 @@ try {
         <div class="container" style="padding-top: 100px;">
             <h1><i class="fas fa-tachometer-alt"></i> Dashboard Admin</h1>
             
-            <?php if (isset($error)): ?>
-                <div class="alert alert-danger"><?= $error ?></div>
+            <?php if (!empty($error)): ?>
+                <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
             
             <!-- Statistics Cards -->

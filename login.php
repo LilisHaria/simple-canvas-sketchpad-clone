@@ -2,12 +2,17 @@
 <?php
 require_once 'config/database.php';
 
+$error = '';
+$success = '';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = sanitize_input($_POST['email']);
-    $password = $_POST['password'];
-    
-    if (!empty($email) && !empty($password)) {
-        try {
+    try {
+        $email = sanitize_input($_POST['email']);
+        $password = $_POST['password'];
+        
+        if (empty($email) || empty($password)) {
+            $error = "Email dan password harus diisi!";
+        } else {
             $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
             $stmt->execute([$email]);
             $user = $stmt->fetch();
@@ -25,12 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $error = "Email atau password salah!";
             }
-        } catch(PDOException $e) {
-            $error = "Terjadi kesalahan: " . $e->getMessage();
         }
-    } else {
-        $error = "Email dan password harus diisi!";
+    } catch(PDOException $e) {
+        $error = "Terjadi kesalahan database: " . $e->getMessage();
+    } catch(Exception $e) {
+        $error = "Terjadi kesalahan: " . $e->getMessage();
     }
+}
+
+// Tampilkan session success jika ada
+if (isset($_SESSION['success'])) {
+    $success = $_SESSION['success'];
+    unset($_SESSION['success']);
 }
 ?>
 
@@ -51,22 +62,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <p style="color: #666;">Masuk untuk melakukan booking</p>
         </div>
         
-        <?php if (isset($_SESSION['success'])): ?>
+        <?php if (!empty($success)): ?>
             <div class="alert alert-success">
-                <?= $_SESSION['success'] ?>
-                <?php unset($_SESSION['success']); ?>
+                <?= htmlspecialchars($success) ?>
             </div>
         <?php endif; ?>
         
-        <?php if (isset($error)): ?>
-            <div class="alert alert-danger"><?= $error ?></div>
+        <?php if (!empty($error)): ?>
+            <div class="alert alert-danger">
+                <?= htmlspecialchars($error) ?>
+            </div>
         <?php endif; ?>
         
         <form method="POST">
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" class="form-control" 
-                       value="<?= $_POST['email'] ?? '' ?>" required>
+                       value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
             </div>
             
             <div class="form-group">

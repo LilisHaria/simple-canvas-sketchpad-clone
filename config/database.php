@@ -1,19 +1,17 @@
 
 <?php
-// Konfigurasi database untuk Hostinger
-// Sesuaikan dengan detail database Hostinger Anda
-$host = 'localhost'; // Biasanya localhost di Hostinger
-$dbname = 'u985354573_arenakuy'; // Sesuaikan dengan nama database Anda
-$username = 'u985354573_arenakuy_lilis'; // Username database Hostinger
-$password = '0909loqweA@#$'; // Password database Hostinger
-
-// Set error reporting untuk production
-error_reporting(0);
-ini_set('display_errors', 0);
+// Error reporting untuk development/debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 
+// Konfigurasi database untuk Hostinger
+$host = 'localhost';
+$dbname = 'u985354573_arenakuy';
+$username = 'u985354573_arenakuy_lilis';
+$password = '0909loqweA@#$';
+
 try {
-    // Buat koneksi PDO dengan error handling yang lebih baik
     $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
     $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -25,23 +23,15 @@ try {
     
     $pdo = new PDO($dsn, $username, $password, $options);
     
-    // Test koneksi
-    $pdo->query("SELECT 1");
-    
 } catch(PDOException $e) {
-    // Log error untuk debugging
-    error_log("Database connection failed: " . $e->getMessage());
-    
-    // Tampilkan pesan user-friendly
-    if (strpos($e->getMessage(), 'Access denied') !== false) {
-        die("Error: Username atau password database salah. Silakan periksa konfigurasi database.");
-    } elseif (strpos($e->getMessage(), 'Unknown database') !== false) {
-        die("Error: Database tidak ditemukan. Silakan periksa nama database.");
-    } elseif (strpos($e->getMessage(), "Can't connect") !== false) {
-        die("Error: Tidak dapat terhubung ke server database. Silakan periksa host database.");
-    } else {
-        die("Error: Gagal terhubung ke database. Silakan coba lagi nanti.");
-    }
+    // Tampilkan error untuk debugging
+    echo "<div style='background: #ff4444; color: white; padding: 20px; margin: 20px; border-radius: 5px;'>";
+    echo "<h3>Database Connection Error:</h3>";
+    echo "<p><strong>Error:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<p><strong>File:</strong> " . __FILE__ . "</p>";
+    echo "<p><strong>Line:</strong> " . __LINE__ . "</p>";
+    echo "</div>";
+    die();
 }
 
 // Fungsi untuk membersihkan input
@@ -77,7 +67,7 @@ function isAdmin() {
 // Fungsi untuk redirect jika belum login
 function requireLogin() {
     if (!isLoggedIn()) {
-        header('Location: ' . getBaseUrl() . 'auth/login.php');
+        header('Location: login.php');
         exit;
     }
 }
@@ -86,34 +76,9 @@ function requireLogin() {
 function requireAdmin() {
     requireLogin();
     if (!isAdmin()) {
-        header('Location: ' . getBaseUrl() . 'dashboard.php');
+        header('Location: dashboard.php');
         exit;
     }
-}
-
-// Fungsi untuk mendapatkan base URL dengan deteksi otomatis
-function getBaseUrl() {
-    $protocol = 'http://';
-    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-        $protocol = 'https://';
-    } elseif (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-        $protocol = 'https://';
-    } elseif (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) {
-        $protocol = 'https://';
-    }
-    
-    $host = $_SERVER['HTTP_HOST'];
-    $script = $_SERVER['SCRIPT_NAME'];
-    $path = dirname($script);
-    
-    // Pastikan path berakhir dengan slash
-    if ($path === '/' || $path === '\\') {
-        $path = '/';
-    } else {
-        $path = rtrim($path, '/\\') . '/';
-    }
-    
-    return $protocol . $host . $path;
 }
 
 // Update session dengan role ketika login
@@ -131,43 +96,20 @@ function logout() {
         session_start();
     }
     session_destroy();
-    header('Location: ' . getBaseUrl() . 'index.php');
+    header('Location: index.php');
     exit;
-}
-
-// Fungsi untuk menampilkan pesan sukses/error
-function showMessage($type, $message) {
-    if (isset($_SESSION[$type])) {
-        echo '<div class="alert alert-' . $type . '">' . htmlspecialchars($_SESSION[$type]) . '</div>';
-        unset($_SESSION[$type]);
-    }
 }
 
 // Set timezone Indonesia
 date_default_timezone_set('Asia/Jakarta');
 
-// Fungsi untuk test koneksi database (untuk debugging)
-function testDatabaseConnection() {
-    global $pdo;
-    try {
-        $stmt = $pdo->query("SELECT 1");
-        return true;
-    } catch(PDOException $e) {
-        error_log("Database test failed: " . $e->getMessage());
-        return false;
-    }
-}
-
-// Fungsi untuk mengecek apakah tabel exists
-function tableExists($tableName) {
-    global $pdo;
-    try {
-        $stmt = $pdo->prepare("SHOW TABLES LIKE ?");
-        $stmt->execute([$tableName]);
-        return $stmt->rowCount() > 0;
-    } catch(PDOException $e) {
-        error_log("Table check failed: " . $e->getMessage());
-        return false;
-    }
+// Test koneksi database
+try {
+    $test = $pdo->query("SELECT 1");
+    // echo "<p style='color: green;'>Database connected successfully!</p>";
+} catch(PDOException $e) {
+    echo "<div style='background: #ff4444; color: white; padding: 10px; margin: 10px;'>";
+    echo "Database test failed: " . htmlspecialchars($e->getMessage());
+    echo "</div>";
 }
 ?>
