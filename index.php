@@ -34,6 +34,23 @@ if (isLoggedIn()) {
                     <a href="auth/login.php" class="btn btn-outline">Login</a>
                     <a href="auth/register.php" class="btn btn-primary">Daftar</a>
                 </nav>
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <!-- Mobile Menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="auth/login.php" class="mobile-menu-item">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </a>
+                <a href="auth/register.php" class="mobile-menu-item">
+                    <i class="fas fa-user-plus"></i>
+                    Daftar
+                </a>
             </div>
         </header>
 
@@ -107,6 +124,7 @@ if (isLoggedIn()) {
         background: white;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         padding: 1rem 0;
+        position: relative;
     }
 
     .landing-header .container {
@@ -134,6 +152,58 @@ if (isLoggedIn()) {
     .nav-links {
         display: flex;
         gap: 1rem;
+    }
+
+    /* Mobile Menu Styles */
+    .mobile-menu-toggle {
+        display: none;
+        flex-direction: column;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+    }
+
+    .mobile-menu-toggle span {
+        width: 25px;
+        height: 3px;
+        background: #333;
+        margin: 3px 0;
+        transition: 0.3s;
+    }
+
+    .mobile-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+
+    .mobile-menu.active {
+        display: block;
+    }
+
+    .mobile-menu-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 2rem;
+        color: #333;
+        text-decoration: none;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.3s;
+    }
+
+    .mobile-menu-item:hover {
+        background: #f8f9fa;
+    }
+
+    .mobile-menu-item i {
+        margin-right: 10px;
+        width: 20px;
     }
 
     .hero-section {
@@ -171,6 +241,40 @@ if (isLoggedIn()) {
         display: flex;
         gap: 1rem;
         flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background: #ffd700;
+        color: #333;
+    }
+
+    .btn-primary:hover {
+        background: #ffed4e;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255,215,0,0.4);
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+    }
+
+    .btn-outline:hover {
+        background: white;
+        color: #10b981;
     }
 
     .btn-large {
@@ -289,14 +393,30 @@ if (isLoggedIn()) {
         }
 
         .nav-links {
-            flex-direction: column;
-            gap: 0.5rem;
+            display: none;
+        }
+
+        .mobile-menu-toggle {
+            display: flex;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
         }
 
         .hero-section .container {
             grid-template-columns: 1fr;
             text-align: center;
             gap: 2rem;
+            padding: 0 1rem;
         }
 
         .hero-content h1 {
@@ -318,9 +438,57 @@ if (isLoggedIn()) {
         .features-grid {
             grid-template-columns: 1fr;
         }
+
+        .features-section .container {
+            padding: 0 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-content h1 {
+            font-size: 1.5rem;
+        }
+
+        .hero-content p {
+            font-size: 1rem;
+        }
+
+        .btn-large {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+        }
+
+        .feature-card {
+            padding: 1.5rem;
+        }
+
+        .features-section h2 {
+            font-size: 1.8rem;
+        }
     }
     </style>
 
-    <script src="assets/js/main.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+
+            if (mobileMenuToggle && mobileMenu) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    mobileMenuToggle.classList.toggle('active');
+                    mobileMenu.classList.toggle('active');
+                });
+
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!mobileMenuToggle.contains(e.target) && !mobileMenu.contains(e.target)) {
+                        mobileMenuToggle.classList.remove('active');
+                        mobileMenu.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
