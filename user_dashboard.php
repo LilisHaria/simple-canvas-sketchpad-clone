@@ -4,7 +4,7 @@ require_once 'config/database.php';
 
 // Redirect admin ke dashboard admin
 if (isAdmin()) {
-    header('Location: admin/dashboard.php');
+    header('Location: admin/admin_dashboard.php');
     exit;
 }
 
@@ -17,6 +17,22 @@ $stats = [
     'pending_bookings' => 0,
     'completed_bookings' => 0
 ];
+
+// Pastikan user_name ada dalam session, jika tidak ambil dari database
+if (!isset($_SESSION['user_name']) || empty($_SESSION['user_name'])) {
+    try {
+        $stmt = $pdo->prepare("SELECT full_name, username FROM users WHERE user_id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $user_data = $stmt->fetch();
+        if ($user_data) {
+            $_SESSION['user_name'] = $user_data['full_name'] ?: $user_data['username'] ?: 'User';
+        } else {
+            $_SESSION['user_name'] = 'User';
+        }
+    } catch(PDOException $e) {
+        $_SESSION['user_name'] = 'User';
+    }
+}
 
 try {
     // Total bookings user
@@ -52,17 +68,17 @@ try {
     <!-- Header untuk User -->
     <header class="main-header">
         <div class="header-container">
-            <a href="dashboard.php" class="logo">
+            <a href="user_dashboard.php" class="logo">
                 <i class="fas fa-futbol"></i>
                 ArenaKuy
             </a>
             
             <nav class="main-nav">
-                <a href="dashboard.php" class="nav-link">
+                <a href="user_dashboard.php" class="nav-link">
                     <i class="fas fa-tachometer-alt"></i>
                     Dashboard
                 </a>
-                <a href="arenas.php" class="nav-link">
+                <a href="user_arenas.php" class="nav-link">
                     <i class="fas fa-futbol"></i>
                     Cari Arena
                 </a>
@@ -75,10 +91,10 @@ try {
             <div class="mobile-dropdown" id="mobileDropdown">
                 <button class="mobile-dropdown-toggle">
                     <i class="fas fa-user"></i>
-                    <?= htmlspecialchars($_SESSION['user_name']) ?>
+                    <?= htmlspecialchars($_SESSION['user_name'] ?? 'User') ?>
                 </button>
                 <div class="mobile-dropdown-menu" id="mobileDropdownMenu">
-                    <a href="dashboard.php">
+                    <a href="user_dashboard.php">
                         <i class="fas fa-tachometer-alt"></i>
                         Dashboard
                     </a>
@@ -101,7 +117,7 @@ try {
             
             <!-- Selamat Datang -->
             <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 30px; text-align: center;">
-                <h2 style="color: #333; margin-bottom: 10px;">Selamat Datang, <?= htmlspecialchars($_SESSION['user_name']) ?>!</h2>
+                <h2 style="color: #333; margin-bottom: 10px;">Selamat Datang, <?= htmlspecialchars($_SESSION['user_name'] ?? 'User') ?>!</h2>
                 <p style="color: #666;">Platform booking lapangan futsal terbaik di Indonesia</p>
             </div>
             
@@ -128,11 +144,11 @@ try {
             <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
                 <h3 style="margin: 0 0 20px 0; color: #333;">Aksi Cepat</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                    <a href="arenas.php" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; transition: transform 0.3s;">
+                    <a href="user_arenas.php" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; transition: transform 0.3s;">
                         <i class="fas fa-search" style="font-size: 2rem;"></i>
                         <span>Cari Arena</span>
                     </a>
-                    <a href="my-booking.php" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; transition: transform 0.3s;">
+                    <a href="user_booking.php" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; transition: transform 0.3s;">
                         <i class="fas fa-calendar-check" style="font-size: 2rem;"></i>
                         <span>My Booking</span>
                     </a>

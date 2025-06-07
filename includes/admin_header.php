@@ -7,7 +7,7 @@
             <span></span>
         </button>
         
-        <a href="dashboard.php" class="logo">
+        <a href="admin_dashboard.php" class="logo">
             <i class="fas fa-futbol"></i>
             ArenaKuy Admin
         </a>
@@ -16,10 +16,10 @@
             <div class="mobile-dropdown" id="mobileDropdown">
                 <button class="mobile-dropdown-toggle">
                     <i class="fas fa-user"></i>
-                    <?= htmlspecialchars($_SESSION['user_name']) ?>
+                    <?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin') ?>
                 </button>
                 <div class="mobile-dropdown-menu" id="mobileDropdownMenu">
-                    <a href="dashboard.php">
+                    <a href="admin_dashboard.php">
                         <i class="fas fa-tachometer-alt"></i>
                         Dashboard
                     </a>
@@ -31,7 +31,7 @@
             </div>
             
             <nav class="main-nav">
-                <a href="dashboard.php" class="nav-link">
+                <a href="admin_dashboard.php" class="nav-link">
                     <i class="fas fa-tachometer-alt"></i>
                     Dashboard
                 </a>
@@ -58,11 +58,11 @@
     
     <div class="sidebar-content">
         <ul class="sidebar-menu">
-            <li><a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-            <li><a href="arenas.php"><i class="fas fa-futbol"></i> Kelola Lapangan</a></li>
-            <li><a href="bookings.php"><i class="fas fa-calendar-check"></i> Kelola Booking</a></li>
-            <li><a href="users.php"><i class="fas fa-users-cog"></i> Kelola User</a></li>
-            <li><a href="reports.php"><i class="fas fa-chart-pie"></i> Laporan & Analisis</a></li>
+            <li><a href="admin_dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="admin_arenas.php"><i class="fas fa-futbol"></i> Kelola Lapangan</a></li>
+            <li><a href="admin_bookings.php"><i class="fas fa-calendar-check"></i> Kelola Booking</a></li>
+            <li><a href="admin_users.php"><i class="fas fa-users-cog"></i> Kelola User</a></li>
+            <li><a href="admin_reports.php"><i class="fas fa-chart-pie"></i> Laporan & Analisis</a></li>
             <li><a href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </div>

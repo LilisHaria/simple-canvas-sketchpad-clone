@@ -5,6 +5,22 @@ requireAdmin();
 
 $error = '';
 
+// Pastikan user_name ada dalam session untuk admin
+if (!isset($_SESSION['user_name']) || empty($_SESSION['user_name'])) {
+    try {
+        $stmt = $pdo->prepare("SELECT full_name, username FROM users WHERE user_id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $user_data = $stmt->fetch();
+        if ($user_data) {
+            $_SESSION['user_name'] = $user_data['full_name'] ?: $user_data['username'] ?: 'Admin';
+        } else {
+            $_SESSION['user_name'] = 'Admin';
+        }
+    } catch(PDOException $e) {
+        $_SESSION['user_name'] = 'Admin';
+    }
+}
+
 // Get statistics
 try {
     // Total users
@@ -127,7 +143,7 @@ try {
                                     <p>Booking <?= htmlspecialchars($booking['arena_name']) ?></p>
                                     <small><?= date('d/m/Y H:i', strtotime($booking['created_at'])) ?></small>
                                 </div>
-                                <a href="bookings.php?id=<?= $booking['booking_id'] ?>" class="btn btn-primary btn-sm">
+                                <a href="admin_bookings.php?id=<?= $booking['booking_id'] ?>" class="btn btn-primary btn-sm">
                                     Konfirmasi
                                 </a>
                             </div>
@@ -142,19 +158,19 @@ try {
             <div class="quick-actions">
                 <h3><i class="fas fa-bolt"></i> Aksi Cepat</h3>
                 <div class="action-buttons">
-                    <a href="arenas.php" class="action-btn">
+                    <a href="admin_arenas.php" class="action-btn">
                         <i class="fas fa-futbol"></i>
                         <span>Kelola Lapangan</span>
                     </a>
-                    <a href="bookings.php" class="action-btn">
+                    <a href="admin_bookings.php" class="action-btn">
                         <i class="fas fa-calendar-check"></i>
                         <span>Kelola Booking</span>
                     </a>
-                    <a href="users.php" class="action-btn">
+                    <a href="admin_users.php" class="action-btn">
                         <i class="fas fa-users-cog"></i>
                         <span>Kelola User</span>
                     </a>
-                    <a href="reports.php" class="action-btn">
+                    <a href="admin_reports.php" class="action-btn">
                         <i class="fas fa-chart-pie"></i>
                         <span>Laporan</span>
                     </a>

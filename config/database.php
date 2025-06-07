@@ -76,18 +76,29 @@ function requireLogin() {
 function requireAdmin() {
     requireLogin();
     if (!isAdmin()) {
-        header('Location: dashboard.php');
+        header('Location: user_dashboard.php');
         exit;
     }
 }
 
-// Update session dengan role ketika login
+// Update session dengan role ketika login - PERBAIKAN DISINI
 function setUserSession($user_data) {
     $_SESSION['user_id'] = $user_data['user_id'] ?? $user_data['id'];
-    $_SESSION['user_name'] = $user_data['full_name'] ?? $user_data['name'] ?? $user_data['username'];
-    $_SESSION['user_email'] = $user_data['email'];
+    
+    // Perbaikan untuk field nama - cek beberapa kemungkinan field
+    if (isset($user_data['full_name']) && !empty($user_data['full_name'])) {
+        $_SESSION['user_name'] = $user_data['full_name'];
+    } elseif (isset($user_data['name']) && !empty($user_data['name'])) {
+        $_SESSION['user_name'] = $user_data['name'];
+    } elseif (isset($user_data['username']) && !empty($user_data['username'])) {
+        $_SESSION['user_name'] = $user_data['username'];
+    } else {
+        $_SESSION['user_name'] = 'User'; // Default fallback
+    }
+    
+    $_SESSION['user_email'] = $user_data['email'] ?? '';
     $_SESSION['user_role'] = $user_data['role'] ?? 'user';
-    $_SESSION['username'] = $user_data['username'] ?? $user_data['name'];
+    $_SESSION['username'] = $user_data['username'] ?? $_SESSION['user_name'];
 }
 
 // Fungsi untuk logout
