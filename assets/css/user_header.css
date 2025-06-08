@@ -26,6 +26,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
 }
 
 /* Logo */
@@ -63,6 +64,7 @@
     height: 30px;
     justify-content: center;
     align-items: center;
+    margin-right: 1rem;
 }
 
 .hamburger-menu:hover {
@@ -94,7 +96,9 @@
 .desktop-nav {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
+    flex: 1;
+    justify-content: center;
 }
 
 .nav-item {
@@ -104,11 +108,23 @@
     border-radius: 20px;
     transition: all 0.3s;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .nav-item:hover {
     background: rgba(255,255,255,0.1);
     color: white;
+}
+
+.nav-item.highlight {
+    background: rgba(221, 168, 83, 0.8);
+    color: white;
+}
+
+.nav-item.highlight:hover {
+    background: rgba(221, 168, 83, 1);
 }
 
 /* Header Actions */
@@ -133,7 +149,7 @@
 }
 
 .sign-in-btn {
-    background: rgba(221, 168, 83, 0.8); /* #DDA853 dengan opacity 80% */
+    background: rgba(221, 168, 83, 0.8);
     color: white;
     padding: 8px 20px;
     border-radius: 20px;
@@ -309,7 +325,7 @@
     left: 0;
     width: 280px;
     height: 100vh;
-    background: rgba(221, 168, 83, 0.8); /* #DDA853 dengan opacity 80% */
+    background: rgba(221, 168, 83, 0.8);
     backdrop-filter: blur(10px);
     color: white;
     z-index: 1500;

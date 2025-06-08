@@ -40,9 +40,15 @@ if (file_exists(__DIR__ . '/../config/database.php')) {
             
             <!-- Desktop Navigation -->
             <nav class="desktop-nav">
-                <a href="user_dashboard.php" class="nav-item">Home</a>
-                <a href="user_arenas.php" class="nav-item">Booking</a>
-                <a href="user_history.php" class="nav-item">History</a>
+                <a href="user_dashboard.php" class="nav-item">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="user_arenas.php" class="nav-item">
+                    <i class="fas fa-calendar-check"></i> Booking
+                </a>
+                <a href="user_mybooking.php" class="nav-item highlight">
+                    <i class="fas fa-calendar-alt"></i> My Bookings
+                </a>
             </nav>
             
             <!-- Header Actions -->
@@ -52,7 +58,7 @@ if (file_exists(__DIR__ . '/../config/database.php')) {
                     <i class="fas fa-search"></i>
                 </button>
                 
-                <!-- Sign In Button -->
+                <!-- User Menu -->
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <div class="user-menu">
                         <button class="user-menu-toggle" id="userMenuToggle">
@@ -86,9 +92,9 @@ if (file_exists(__DIR__ . '/../config/database.php')) {
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <form class="search-form" action="search_arenas.php" method="GET">
+            <form class="search-form" action="user_arenas.php" method="GET">
                 <div class="search-input-group">
-                    <input type="text" name="q" placeholder="Nama arena, lokasi..." class="search-input">
+                    <input type="text" name="search" placeholder="Nama arena atau deskripsi..." class="search-input">
                     <button type="submit" class="search-submit">
                         <i class="fas fa-search"></i>
                     </button>
@@ -114,19 +120,19 @@ if (file_exists(__DIR__ . '/../config/database.php')) {
                 <li>
                     <a href="user_dashboard.php" class="sidebar-item">
                         <i class="fas fa-home"></i>
-                        <span>Home</span>
+                        <span>Dashboard</span>
                     </a>
                 </li>
                 <li>
                     <a href="user_arenas.php" class="sidebar-item">
                         <i class="fas fa-calendar-check"></i>
-                        <span>Booking</span>
+                        <span>Pilih Arena</span>
                     </a>
                 </li>
                 <li>
-                    <a href="user_history.php" class="sidebar-item">
-                        <i class="fas fa-history"></i>
-                        <span>History</span>
+                    <a href="user_mybooking.php" class="sidebar-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>My Bookings</span>
                     </a>
                 </li>
                 <li>
