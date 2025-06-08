@@ -136,6 +136,12 @@ if (file_exists(__DIR__ . '/../config/database.php')) {
                     </a>
                 </li>
                 <li>
+                    <a href="user_history.php" class="sidebar-item">
+                        <i class="fas fa-history"></i>
+                        <span>History</span>
+                    </a>
+                </li>
+                <li>
                     <a href="user_profile.php" class="sidebar-item">
                         <i class="fas fa-user"></i>
                         <span>Profile</span>

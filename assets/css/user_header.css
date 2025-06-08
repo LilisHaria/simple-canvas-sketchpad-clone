@@ -38,6 +38,7 @@
     color: white;
     text-decoration: none;
     transition: opacity 0.3s;
+    order: 2;
 }
 
 .logo:hover {
@@ -49,7 +50,7 @@
     font-size: 1.8rem;
 }
 
-/* Hamburger Menu */
+/* Hamburger Menu - Always visible */
 .hamburger-menu {
     background: none;
     border: none;
@@ -58,13 +59,13 @@
     padding: 8px;
     border-radius: 4px;
     transition: background 0.3s;
-    display: none;
+    display: flex;
     flex-direction: column;
     width: 30px;
     height: 30px;
     justify-content: center;
     align-items: center;
-    margin-right: 1rem;
+    order: 1;
 }
 
 .hamburger-menu:hover {
@@ -99,6 +100,7 @@
     gap: 1rem;
     flex: 1;
     justify-content: center;
+    order: 3;
 }
 
 .nav-item {
@@ -132,6 +134,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    order: 4;
 }
 
 .search-btn {
@@ -432,14 +435,12 @@
 .main-content {
     min-height: 100vh;
     padding-top: 20px;
+    margin: 0 auto;
+    max-width: 100%;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .hamburger-menu {
-        display: flex;
-    }
-    
     .desktop-nav {
         display: none;
     }
@@ -498,4 +499,24 @@
 .sidebar-item.active {
     background: rgba(255,255,255,0.2);
     border-right: 3px solid white;
+}
+
+/* Layout fixes untuk rata kanan kiri */
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Ensure content doesn't overflow */
+.main-content {
+    width: 100%;
+    overflow-x: hidden;
 }
