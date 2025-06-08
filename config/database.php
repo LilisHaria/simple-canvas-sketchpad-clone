@@ -81,7 +81,7 @@ function requireAdmin() {
     }
 }
 
-// Update session dengan role ketika login - PERBAIKAN DISINI
+// Update session dengan role ketika login - Disesuaikan dengan kolom database baru
 function setUserSession($user_data) {
     $_SESSION['user_id'] = $user_data['user_id'] ?? $user_data['id'];
     
@@ -99,6 +99,8 @@ function setUserSession($user_data) {
     $_SESSION['user_email'] = $user_data['email'] ?? '';
     $_SESSION['user_role'] = $user_data['role'] ?? 'user';
     $_SESSION['username'] = $user_data['username'] ?? $_SESSION['user_name'];
+    $_SESSION['user_phone'] = $user_data['phone_number'] ?? '';
+    $_SESSION['user_profile_picture'] = $user_data['profile_picture'] ?? 'default_profile.jpg';
 }
 
 // Fungsi untuk logout

@@ -25,7 +25,7 @@ if (file_exists(__DIR__ . '/../config/database.php')) {
     <!-- Header Navigation -->
     <header class="user-header">
         <div class="header-container">
-            <!-- Hamburger Menu -->
+            <!-- Hamburger Menu - Always visible -->
             <button class="hamburger-menu" id="hamburgerToggle">
                 <span></span>
                 <span></span>

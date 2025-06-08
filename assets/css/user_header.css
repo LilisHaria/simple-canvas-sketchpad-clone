@@ -50,7 +50,7 @@
     font-size: 1.8rem;
 }
 
-/* Hamburger Menu - Always visible */
+/* Hamburger Menu - Always visible di semua mode */
 .hamburger-menu {
     background: none;
     border: none;
@@ -321,7 +321,7 @@
     background: rgba(45, 114, 152, 1);
 }
 
-/* Sidebar */
+/* Sidebar - Visible di semua mode */
 .user-sidebar {
     position: fixed;
     top: 0;
@@ -439,6 +439,26 @@
     max-width: 100%;
 }
 
+/* Layout fixes untuk rata kanan kiri */
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Ensure content doesn't overflow */
+.main-content {
+    width: 100%;
+    overflow-x: hidden;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .desktop-nav {
@@ -499,24 +519,4 @@
 .sidebar-item.active {
     background: rgba(255,255,255,0.2);
     border-right: 3px solid white;
-}
-
-/* Layout fixes untuk rata kanan kiri */
-body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-}
-
-.container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-}
-
-/* Ensure content doesn't overflow */
-.main-content {
-    width: 100%;
-    overflow-x: hidden;
 }
