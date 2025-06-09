@@ -65,8 +65,8 @@ include 'includes/user_header.php';
     <?php endif; ?>
     
     <!-- Search & Filter -->
-    <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 40px;">
-        <form method="GET" style="display: grid; grid-template-columns: 1fr 200px 120px; gap: 15px; align-items: end;">
+    <div class="search-filter-container" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 40px;">
+        <form method="GET" class="search-form" style="display: grid; grid-template-columns: 1fr 200px 120px; gap: 15px; align-items: end;">
             <div style="margin-bottom: 0;">
                 <label for="search" style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">Cari Arena</label>
                 <input type="text" id="search" name="search" 
@@ -85,7 +85,7 @@ include 'includes/user_header.php';
                 </select>
             </div>
             
-            <button type="submit" style="background: #DDA853; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: background 0.3s;">
+            <button type="submit" class="search-btn" style="background: #DDA853; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: background 0.3s;">
                 <i class="fas fa-search"></i> Cari
             </button>
         </form>
@@ -99,9 +99,9 @@ include 'includes/user_header.php';
             <p style="color: #999;">Coba ubah kata kunci pencarian atau filter harga</p>
         </div>
     <?php else: ?>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-bottom: 40px;">
+        <div class="arena-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-bottom: 40px;">
             <?php foreach ($arenas as $arena): ?>
-                <div style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.3s;">
+                <div class="arena-card" style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.3s;">
                     <div style="height: 200px; background: linear-gradient(135deg, #2D7298, #DDA853); position: relative;">
                         <?php if ($arena['image_url']): ?>
                             <img src="<?= htmlspecialchars($arena['image_url']) ?>" alt="<?= htmlspecialchars($arena['arena_name']) ?>"
@@ -137,24 +137,114 @@ include 'includes/user_header.php';
 </div>
 
 <style>
+/* Mobile First Responsive Design */
 @media (max-width: 768px) {
     .container {
-        padding: 20px 10px !important;
+        padding: 20px 15px !important;
+        max-width: 100% !important;
+    }
+    
+    h1 {
+        font-size: 2rem !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .search-filter-container {
+        padding: 20px !important;
+        margin-bottom: 30px !important;
+    }
+    
+    .search-form {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px !important;
+        align-items: stretch !important;
+    }
+    
+    .search-form div {
+        width: 100% !important;
+    }
+    
+    .search-btn {
+        width: 100% !important;
+        padding: 15px !important;
+        font-size: 1.1rem !important;
+    }
+    
+    .arena-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+        margin-bottom: 30px !important;
+    }
+    
+    .arena-card {
+        margin: 0 !important;
+        border-radius: 12px !important;
+    }
+    
+    .arena-card div[style*="padding: 25px"] {
+        padding: 20px !important;
+    }
+    
+    .arena-card h3 {
+        font-size: 1.3rem !important;
+    }
+    
+    .arena-card div[style*="font-size: 2rem"] span {
+        font-size: 1.8rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px 10px !important;
     }
     
     h1 {
         font-size: 1.8rem !important;
+        margin-bottom: 15px !important;
     }
     
-    form {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 15px !important;
+    .search-filter-container {
+        padding: 15px !important;
+        margin-bottom: 25px !important;
     }
     
-    div[style*="grid-template-columns"] {
-        grid-template-columns: 1fr !important;
-        gap: 20px !important;
+    .arena-card {
+        border-radius: 10px !important;
+    }
+    
+    .arena-card div[style*="padding: 25px"] {
+        padding: 15px !important;
+    }
+    
+    .arena-card h3 {
+        font-size: 1.2rem !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .arena-card p {
+        font-size: 0.9rem !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .arena-card div[style*="font-size: 2rem"] span {
+        font-size: 1.6rem !important;
+    }
+    
+    .arena-card a {
+        padding: 10px !important;
+        font-size: 0.95rem !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .search-form {
+        grid-template-columns: 1fr 200px 120px !important;
+    }
+    
+    .arena-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
     }
 }
 </style>

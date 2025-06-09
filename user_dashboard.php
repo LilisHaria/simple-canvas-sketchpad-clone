@@ -58,21 +58,20 @@ include 'includes/user_header.php';
 ?>
 
 <div class="container" style="padding-top: 50px; max-width: 1200px; margin: 0 auto; padding-left: 1rem; padding-right: 1rem;">
-    <h1 style="color: #333; margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
-        <i class="fas fa-tachometer-alt"></i> Dashboard
-    </h1>
+    <!-- Hero Section with Welcome Message -->
+    <div style="background: linear-gradient(135deg, #2D7298, #5db2c5); color: white; text-align: center; padding: 60px 20px; border-radius: 15px; margin-bottom: 40px;">
+        <h1 style="font-size: 3rem; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 15px;">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </h1>
+        <h2 style="font-size: 2rem; margin-bottom: 10px;">Selamat Datang, <?= htmlspecialchars($_SESSION['user_name'] ?? 'User') ?>!</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 0;">Platform booking lapangan futsal terbaik di Indonesia</p>
+    </div>
     
     <?php if (isset($error)): ?>
         <div style="background: #fee; border: 1px solid #fcc; color: #c66; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
             <?= htmlspecialchars($error) ?>
         </div>
     <?php endif; ?>
-    
-    <!-- Selamat Datang -->
-    <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 30px; text-align: center;">
-        <h2 style="color: #333; margin-bottom: 10px;">Selamat Datang, <?= htmlspecialchars($_SESSION['user_name'] ?? 'User') ?>!</h2>
-        <p style="color: #666;">Platform booking lapangan futsal terbaik di Indonesia</p>
-    </div>
     
     <!-- Stats untuk User -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 30px;">
@@ -108,6 +107,53 @@ include 'includes/user_header.php';
         </div>
     </div>
 </div>
+
+<style>
+@media (max-width: 768px) {
+    .container {
+        padding: 20px 10px !important;
+    }
+    
+    h1 {
+        font-size: 2rem !important;
+    }
+    
+    h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+    
+    div[style*="padding: 60px"] {
+        padding: 40px 20px !important;
+    }
+    
+    .quick-actions a {
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px 5px !important;
+    }
+    
+    h1 {
+        font-size: 1.8rem !important;
+    }
+    
+    h2 {
+        font-size: 1.3rem !important;
+    }
+    
+    div[style*="padding: 60px"] {
+        padding: 30px 15px !important;
+    }
+}
+</style>
 
 </div> <!-- Close main-content -->
 
